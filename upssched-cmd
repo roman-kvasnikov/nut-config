@@ -1,0 +1,22 @@
+#!/bin/bash
+case "$1" in
+    onbatt)
+        logger -t upssched "Timer expired or low battery. Initiating shutdown."
+        /usr/sbin/upsmon -c fsd
+        ;;
+    online)
+        logger -t upssched "Power restored, shutdown timer cancelled."
+        ;;
+    commbad)
+        logger -t upssched "Communication with UPS lost!"
+        ;;
+    commok)
+        logger -t upssched "Communication with UPS restored."
+        ;;
+    powerdown)
+        logger -t upssched "System shutting down by UPS command."
+        ;;
+    *)
+        logger -t upssched "Unrecognized command: $1"
+        ;;
+esac
