@@ -1,0 +1,7 @@
+[monuser]
+    password = CHANGE_ME_MONUSER_PASSWORD
+    upsmon primary
+
+[peanut]
+    password = CHANGE_ME_PEANUT_PASSWORD
+    upsmon primary

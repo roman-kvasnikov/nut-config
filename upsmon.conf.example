@@ -1,4 +1,4 @@
-MONITOR myups@localhost 1 monuser F6nGksUfGNEhhKoxHZQPMQ primary
+MONITOR myups@localhost 1 monuser CHANGE_ME_MONUSER_PASSWORD primary
 
 # Сколько UPS должны сказать "критично" для начала выключения.
 # У нас 1 UPS — значит 1.
