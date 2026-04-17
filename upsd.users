@@ -4,5 +4,5 @@
 
 [peanut]
     password = F6nGksUfGNEhhKoxHZQPMQ
-    upsmon master
+    upsmon primary
     instcmds = ALL
