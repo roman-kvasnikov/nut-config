@@ -4,24 +4,32 @@ MONITOR myups@localhost 1 monuser CHANGE_ME_MONUSER_PASSWORD primary
 # У нас 1 UPS — значит 1.
 MINSUPPLIES 1
 
-# Команда выключения
+# Команда выключения хоста — будет вызвана после FSD (Forced Shutdown).
 SHUTDOWNCMD "/usr/bin/systemctl poweroff"
 
-# Таймер: после получения сигнала ONBATT ждём 1200 секунд (20 минут),
-# потом вызываем FSD (Forced Shutdown).
-# Если питание вернулось раньше — таймер сбрасывается.
+# Сколько секунд secondary-хосты могут отставать от primary при FSD.
+# Для одного хоста значение нерелевантно, но должно быть задано.
 HOSTSYNC 15
+
+# Если от UPS нет данных дольше DEADTIME секунд — считаем связь потерянной
+# (генерируется событие COMMBAD).
 DEADTIME 25
+
+# Флаг-файл, который upsmon создаёт перед shutdown'ом.
+# Используется системными init-скриптами для последующей команды killpower
+# (полное отключение нагрузки через UPS), если это поддерживается.
 POWERDOWNFLAG /etc/killpower
 
-# Интервал опроса upsmon → upsd
+# Интервал опроса upsd в нормальном режиме (секунд).
 POLLFREQ 5
+
+# Интервал опроса upsd при активном алерте (ONBATT, LOWBATT и т.п.).
 POLLFREQALERT 5
 
 # Скрипт-обработчик событий
 NOTIFYCMD /usr/sbin/upssched
 
-# Какие события отслеживать
+# Тексты сообщений для каждого события (попадают в syslog и WALL).
 NOTIFYMSG ONLINE   "UPS %s: on line power"
 NOTIFYMSG ONBATT   "UPS %s: on battery"
 NOTIFYMSG LOWBATT  "UPS %s: battery is low"
@@ -33,6 +41,10 @@ NOTIFYMSG REPLBATT "UPS %s: battery needs to be replaced"
 NOTIFYMSG NOCOMM   "UPS %s: is unavailable"
 NOTIFYMSG NOPARENT "upsmon parent process died - shutdown impossible"
 
+# Что делать с каждым событием:
+#   SYSLOG — писать в журнал
+#   WALL   — рассылать всем залогиненным пользователям
+#   EXEC   — вызывать NOTIFYCMD (upssched)
 NOTIFYFLAG ONLINE   SYSLOG+WALL+EXEC
 NOTIFYFLAG ONBATT   SYSLOG+WALL+EXEC
 NOTIFYFLAG LOWBATT  SYSLOG+WALL+EXEC
@@ -44,7 +56,14 @@ NOTIFYFLAG REPLBATT SYSLOG+WALL
 NOTIFYFLAG NOCOMM   SYSLOG+WALL+EXEC
 NOTIFYFLAG NOPARENT SYSLOG+WALL
 
+# Как часто повторять предупреждение о необходимости замены батареи (секунды).
+# 43200 = 12 часов.
 RBWARNTIME 43200
+
+# Как часто повторять предупреждение о потере связи с UPS (секунды).
+# 600 = 10 минут.
 NOCOMMWARNTIME 600
 
+# Финальная задержка перед запуском SHUTDOWNCMD после получения события SHUTDOWN.
+# Даёт WALL-сообщениям время дойти до пользователей.
 FINALDELAY 5
