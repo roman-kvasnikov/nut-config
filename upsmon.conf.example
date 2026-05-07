@@ -1,3 +1,5 @@
+RUN_AS_USER root
+
 MONITOR myups@localhost 1 monuser CHANGE_ME_MONUSER_PASSWORD primary
 
 # Сколько UPS должны сказать "критично" для начала выключения.
@@ -5,7 +7,7 @@ MONITOR myups@localhost 1 monuser CHANGE_ME_MONUSER_PASSWORD primary
 MINSUPPLIES 1
 
 # Команда выключения хоста — будет вызвана после FSD (Forced Shutdown).
-SHUTDOWNCMD "/usr/bin/systemctl poweroff"
+SHUTDOWNCMD "/sbin/shutdown -h now"
 
 # Сколько секунд secondary-хосты могут отставать от primary при FSD.
 # Для одного хоста значение нерелевантно, но должно быть задано.
